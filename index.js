@@ -65,7 +65,7 @@ var ModalBox = React.createClass({
       backdropOpacity: 0.5,
       backdropColor: "black",
       backdropContent: null,
-      animationDuration: 400
+      animationDuration: 400,
     };
   },
 
@@ -86,6 +86,7 @@ var ModalBox = React.createClass({
       width: size.width,
       containerHeight: size.height,
       containerWidth: size.width,
+      content: null,
       isInitialized: false
     };
   },
@@ -419,7 +420,7 @@ var ModalBox = React.createClass({
          onLayout={this.onViewLayout}
          style={[styles.wrapper, size, this.props.style, transform]}
          {...this.state.pan.panHandlers}>
-          {this.props.children}
+          {this.state.content||this.props.children}
         </Animated.View>
       </View>
     );
@@ -427,11 +428,12 @@ var ModalBox = React.createClass({
 
   /****************** PUBLIC METHODS **********************/
 
-  open: function() {
+  open: function(content) {
     if (this.props.isDisabled) return;
     if (!this.state.isAnimateOpen && (!this.state.isOpen || this.state.isAnimateClose)) {
       this.onViewLayoutCalculated = () => {
         this.setState({});
+        if (content) this.setState({content: content});
         this.animateOpen();
       };
       this.setState({isAnimateOpen : true});
@@ -443,6 +445,7 @@ var ModalBox = React.createClass({
     if (!this.state.isAnimateClose && (this.state.isOpen || this.state.isAnimateOpen)) {
       delete this.onViewLayoutCalculated;
       this.animateClose();
+      this.setState({content: null});
     }
   }
 
